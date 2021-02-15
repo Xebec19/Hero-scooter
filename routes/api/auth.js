@@ -53,4 +53,38 @@ router.post('/register',(req,res) => {
 		})
 		.catch(err => console.log(err));
 })
+
+/*
+type: POST
+route: /api/auth/login
+desc: just for testing
+access: PUBLIC
+*/
+
+router.post('/login',(req,res) => {
+	const email = req.body.email;
+	const password = req.body.password;
+
+	Person.findOne({email})
+	.then(person => {
+		if(!person){
+			return res.status(404).json({emailerror: 'User not found!!'});
+		}
+		var checkPass = bcrypt.compareSync('one', person.password);
+		console.log(`Password: ${password}, dbPass: ${person.name}, value: ${checkPass}`);
+		/*.then(isCorrect => {
+			if(isCorrect){
+				res.json({success: 'User is able to login successfully!!'})
+			}
+			else {
+				res.status(400).json({error: 'Password is incorrect!!'})
+			}
+		})
+		.catch(err => console.log(err)) */
+		if(checkPass){ return res.status(202).json({message: 'Success'}) }
+		else{ return res.status(404).json({error: 'Error!!!'}) }
+	})
+	.catch(err => console.log(err));
+})
+
 export default router;
