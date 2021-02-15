@@ -1,5 +1,5 @@
 import express from 'express';
-import bcrypt from 'bcryptjs';
+import bcrypt from 'bcrypt-nodejs';
 import jsonwt from 'jsonwebtoken';
 import passport from 'passport';
 
@@ -42,7 +42,8 @@ router.post('/register',(req,res) => {
 					password: req.body.password
 				});
 				//Encrypt passport 
-				var hash = bcrypt.hashSync(newPerson.passport,8);
+				/*var hash = bcrypt.hashSync(newPerson.passport,8);*/
+				var hash = bcrypt.hashSync(newPerson.passport);
 				newPerson.password = hash;
 				newPerson
 				.save()
