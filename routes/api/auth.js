@@ -1,5 +1,5 @@
 import express from 'express';
-import bcrypt from 'bcrypt-nodejs';
+import bcrypt from 'bcryptjs';
 import jsonwt from 'jsonwebtoken';
 import passport from 'passport';
 
@@ -43,12 +43,19 @@ router.post('/register',(req,res) => {
 				});
 				//Encrypt passport 
 				/*var hash = bcrypt.hashSync(newPerson.passport,8);*/
-				var hash = bcrypt.hashSync(newPerson.passport);
-				newPerson.password = hash;
+				/*var hash = bcrypt.hashSync(newPerson.passport);*/
+				bcrypt.genSalt(10,function(err,salt){
+					bcrypt.hash(newPerson.password,salt,function(err,hash){
+
+					newPerson.password = hash;
 				newPerson
 				.save()
 				.then(person => res.json(person))
-				.catch(err => console.log(`Error while saving : ${err}`))
+				.catch(err => console.log(`Error while saving : ${err}`))	
+					
+					}) //bcrypt.hash ends here
+				})
+				
 			}
 		})
 		.catch(err => console.log(err));
