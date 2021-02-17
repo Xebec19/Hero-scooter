@@ -81,7 +81,26 @@ router.post('/login',(req,res) => {
 		/*console.log(`Password: ${password}, dbPass: ${person.name}`);*/
 		bcrypt.compare(password, person.password).then((response) => {
 		
-			if(response){ return res.status(202).json({message: 'Success'}) }
+			if(response){  
+				/*res.status(202).json({message: 'Success'});*/
+				//use payload and create token for user 
+				const payload = {
+					id: person.id,
+					name: person.name,
+					email: person.email
+				};
+				jsonwt.sign(
+					payload,
+					'secret',
+					{expiresIn: '5h'},
+					(err,token) => {
+						res.json({
+							success: true,
+							token: "Bearer " + token
+						})
+					}
+				)
+			}
 			else {return res.status(402).json({error: 'does not match!!'})}
 
 
@@ -101,5 +120,15 @@ router.post('/login',(req,res) => {
 	})
 	.catch(err => console.log(err));
 })
+
+/*
+type: GET
+route: /api/auth/profile
+desc: route for user profile
+access: PRIVATE
+*/
+router.get('/profile',passport.authenticate('jwt',{session: false}),(req,res) => {
+	console.log(req);
+});
 
 export default router;

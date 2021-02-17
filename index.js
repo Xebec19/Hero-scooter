@@ -2,6 +2,7 @@ import express from 'express';
 const app = express()
 const port = process.env.PORT || 3000
 import mongoose from 'mongoose';
+import passport from 'passport'
 
 import bodyparser from 'body-parser';
 
@@ -25,6 +26,12 @@ mongoose
 	console.log('MongoDB connected!!!')
 })
 .catch(err => console.log(`Error!!! ${err}`));
+
+//Passport middleware
+app.use(passport.initialize());
+
+//config for JWT strategy
+import './strategies/jsonwtstrategy.js'
 
 /*
 TYPE: GET,
