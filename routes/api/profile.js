@@ -1,6 +1,6 @@
-import express from 'express';
+const express = require("express");
 const router = express.Router();
 
-router.get('/',(req,res) => res.json({test: "Profile is success"}))
+router.get("/", (req, res) => res.json({ profile: "profile is success" }));
 
-export default router;
+module.exports = router;

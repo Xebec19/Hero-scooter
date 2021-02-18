@@ -1,19 +1,18 @@
-import express from 'express';
-const app = express()
-const port = process.env.PORT || 3000
-import mongoose from 'mongoose';
-import passport from 'passport'
-
-import bodyparser from 'body-parser';
-
-//Middleware for bodyparser
-app.use(bodyparser.urlencoded({extended: false}));
-app.use(bodyparser.json());
+const express = require("express");
+const mongoose = require("mongoose");
+const bodyparser = require("body-parser");
+const passport = require("passport");
 
 //bring all routes
-import auth from './routes/api/auth.js';
-import profile from './routes/api/profile.js';
-import questions from './routes/api/questions.js';
+const auth = require("./routes/api/auth");
+const questions = require("./routes/api/questions");
+const profile = require("./routes/api/profile");
+
+const app = express();
+
+//Middleware for bodyparser
+app.use(bodyparser.urlencoded({ extended: false }));
+app.use(bodyparser.json());
 
 //mongoDB configuration
 mongoose
@@ -27,28 +26,23 @@ mongoose
 })
 .catch(err => console.log(`Error!!! ${err}`));
 
+
 //Passport middleware
 app.use(passport.initialize());
 
-//config for JWT strategy
-import './strategies/jsonwtstrategy.js'
+//Config for JWT strategy
+require("./strategies/jsonwtStrategy")(passport);
 
-/*
-TYPE: GET,
-DESC: Testing,
-ACCESS: PUBLIC 
-*/
-app.get('/',(req,res) => {
-	res.send('Hello World!')
-})
+//just for testing  -> route
+app.get("/", (req, res) => {
+  res.send("Hey there Big stack");
+});
 
-//routes
-app.use('/api/auth',auth)
+//actual routes
+app.use("/api/auth", auth);
+app.use("/api/questions", questions);
+app.use("/api/profile", profile);
 
-app.use('/api/auth/profile',profile)
+const port = process.env.PORT || 3000;
 
-app.use('/api/ques',questions)
-
-app.listen(port, () => {
-	console.log(`Running at ${port}`)
-})
+app.listen(port, () => console.log(`App is running at ${port}`));
