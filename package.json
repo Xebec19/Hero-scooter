@@ -9,7 +9,7 @@
   "keywords": [
     "stackoverflow"
   ],
-  "author": "Hitesh",
+  "author": "Rohan",
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^2.4.3",
