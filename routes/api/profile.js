@@ -129,4 +129,23 @@ router.get('/:id',(req,res) => {
 	.catch(err => console.log('Error in fetching username'))
 })
 
+/*
+@type DELETE
+@route /api/profile
+@desc route for deleting user
+@access PRIVATE
+*/
+router.delete('/',passport.authenticate('jwt',{session: false}), (req,res) =>{
+	Profile.findOne({user:req.user.id})
+	Profile.findOneAndRemove({user: req.user.id})
+	.then( () => {
+		Person.findOneAndRemove({_id: req.user.id})
+		.then( () => {
+			res.jaon({success: 'delete was a success'})
+		} )
+		.catch(err => console.log(err))
+	} )
+	.catch(err => console.log(err));
+})
+
 module.exports = router;
