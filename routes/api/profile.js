@@ -88,12 +88,45 @@ router.post(
 
 /*
 @type GET
-@route /api/profile/
+@route /api/profile/username
 @desc route for getting user profile based on username
 @access PUBLIC
 */
 router.get('/:username',(req,res) => {
-	Profile.findOne({})
+	Profile.findOne({username: req.params.username})
+	.populate("user",["name","profilepic"])
+	.then(profile => {
+		if(!profile){
+			res.status(404).json({'error':'user not found!!'})
+		}
+		res.json(profile);
+	})
+	.catch(err => console.log('Error in fetching username ' + err));
+})
+
+router.get('/find/users',(req,res) => {
+	Profile.find()
+	.populate("user",["name","profilepic"])
+	.then(profile => {
+		if(!profile){
+			res.status(404).json({'error':'user not found!!'})
+		}
+		res.json(profile);
+	})
+	.catch(err => console.log('Error in fetching username ' + err));
+})
+
+
+router.get('/:id',(req,res) => {
+	Profile.findOne({id: req.params.id})
+	.populate("user",["name","profilepic"])
+	.then(profile => {
+		if(!profile){
+			res.status(404).json(console.log('Error in fetching id ' + err))
+		}
+		res.json(profile);
+	})
+	.catch(err => console.log('Error in fetching username'))
 })
 
 module.exports = router;
