@@ -42,16 +42,58 @@ router.post(
 	(req,res) => {
 		const profileValues = {};
 		profileValues.user = req.user.id;
-		if(req.body.username) profileValues.username = req,body.username;
-		if(req.body.username) profileValues.website = req,body.website;
-		if(req.body.username) profileValues.country = req,body.country;
-		if(req.body.username) profileValues.portfolio = req,body.portfolio;
+		if(req.body.username) profileValues.username = req.body.username;
+		if(req.body.username) profileValues.website = req.body.website;
+		if(req.body.username) profileValues.country = req.body.country;
+		if(req.body.username) profileValues.portfolio = req.body.portfolio;
 		if(typeof req.body.languages !== undefined){
-		  profileValues.username = req,body.username.split(",")	
+		  profileValues.username = req.body.username.split(",")	
 		} 
-		if(req.body.youtube) profileValues.youtube = req,body.youtube;
-		if(req.body.facebook) profileValues.facebook = req,body.facebook;
-		if(req.body.instagram) profileValues.instagram = req,body.instagram;
+		//get social links
+		profileValues.social = {}
+		if(req.body.youtube) profileValues.social.youtube = req.body.youtube;
+		if(req.body.facebook) profileValues.social.facebook = req.body.facebook;
+		if(req.body.instagram) profileValues.social.instagram = req.body.instagram;
+		Profile.findOne({user: req.user.id})
+		.then(
+			profile => {
+				if(profile){
+					Profile.findOneAndUpdate(
+					{user: req.user.id},
+					{$set: profileValues }
+						,{new: true})
+					
+					.then(profile => res.json(profile))
+					.catch(err => console.log('problem in update' + err));
+					}
+				 else {
+					Profile.findOne({username: profileValues.username})
+					.then(profile => {
+						if(profile){
+							res.status(400).json({'username': 'Username aready exists'})
+						}
+						//save user
+						new Profile(profileValues)
+						.save()
+						.then(profile => res.json(profile))
+						.catch(err => console.log('error while saving profile',err))
+					})
+					.catch( err => console.log('Error occured !!!',err))
+				}
+			
+			})
+		.catch(err => console.log('Problem in fetching profile' + err))
+	}
 	);  
+
+/*
+@type GET
+@route /api/profile/
+@desc route for getting user profile based on username
+@access PUBLIC
+*/
+router.get('/:username',(req,res) => {
+	Profile.findOne({})
+})
 
 module.exports = router;
